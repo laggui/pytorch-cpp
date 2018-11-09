@@ -1,0 +1,11 @@
+# vscode stuff
+.vscode/
+
+# python stuff
+__pycache__/
+
+# don't commit heavy data
+data/
+
+# cpp
+build/
