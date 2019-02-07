@@ -73,7 +73,7 @@ if __name__ == '__main__':
         #print('[WARNING] ScriptModules cannot be moved to a GPU device yet. Running strictly on CPU for now.')
         #device = torch.device('cpu') # 'to' is not supported on TracedModules (yet)
 
-    if device.type == 'cuda:0':
+    if device.type == 'cuda':
         cudnn.benchmark = True
         model = torch.nn.DataParallel(model)
 
