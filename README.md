@@ -21,6 +21,16 @@ Predicted: dog | 10.056212425231934
 Time: 0.06844925880432129 seconds
 ```
 
+```sh
+pytorch$ python predict.py torch-script --model=../data/VGG16-traced-eval.pt --image=../data/dog.png 
+==> Building model...
+==> Loading Torch Script model...
+Predicted: dog | 10.056212425231934
+Time: 0.03339433670043945 seconds
+```
+
+As we can see, the static graph reprensentation (traced model) of our network has faster inference time.
+
 ### Libtorch
 Before running our prediction, we need to compile the source. In your `libtorch` directory, create a build directory and compile+build the application from source.
 
