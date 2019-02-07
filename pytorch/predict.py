@@ -15,7 +15,7 @@ import cv2
 from vgg import VGGNet
 
 # Check device    
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 # CIFAR-10 classes
 classes = ('plane', 'car', 'bird', 'cat',
 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
@@ -69,9 +69,9 @@ if __name__ == '__main__':
         # Load ScriptModule from io.BytesIO object
         with open(args.model, 'rb') as f:
             buffer = io.BytesIO(f.read())
-        model = torch.jit.load(buffer)
-        print('[WARNING] ScriptModules cannot be moved to a GPU device yet. Running strictly on CPU for now.')
-        device = torch.device('cpu') # 'to' is not supported on TracedModules (yet)
+        model = torch.jit.load(buffer, map_location=device)
+        #print('[WARNING] ScriptModules cannot be moved to a GPU device yet. Running strictly on CPU for now.')
+        #device = torch.device('cpu') # 'to' is not supported on TracedModules (yet)
 
     if device.type == 'cuda':
         cudnn.benchmark = True
