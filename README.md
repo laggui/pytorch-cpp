@@ -66,5 +66,8 @@ Predicted: dog | 10.0562
 Time: 0.009481 seconds
 ```
 
+### TO-DO
+
+- Update libtorch C++ example
 
 
