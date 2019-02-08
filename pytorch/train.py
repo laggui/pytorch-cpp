@@ -71,33 +71,31 @@ def validate(model, val_loader, criterion):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='VGGNet Training Tool')
-    parser.add_argument('mtype', type=str, choices=['pytorch', 'torch-script'], help='Model type')
+    parser.add_argument('dataset', type=str, choices=['cifar10'], help='Dataset') # only cifar10 support for now
+    parser.add_argument('--upscale', type=int, default=0, help='Upscale to 224x224 for test purposes')
+    parser.add_argument('--output', type=str, default='VGG16model.pth', help='Model output name')
     args = parser.parse_args()
+
+    #cifar10 = True if args.dataset == 'cifar10' else False
+    num_classes = 10
+    input_size = 224 if args.upscale else 32
     # Load CIFAR10 dataset
     print('==> Preparing data...')
     transform_train = transforms.Compose([
-        transforms.RandomCrop(32, padding=4),
+        transforms.Resize(input_size), # for testing purposes
+        transforms.RandomCrop(input_size, padding=4),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
     ])
 
     trainset = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
-    train_loader = DataLoader(trainset, batch_size=128, shuffle=True, num_workers=4)
+    train_loader = DataLoader(trainset, batch_size=32 if args.upscale else 128, shuffle=True, num_workers=4)
 
     # Model
     print('==> Building model...')
     #model = VGGNet('D', num_classes=10, input_size=32) # VGG16 is configuration D (refer to paper)
-    if args.mtype == 'torch-script':
-        # print('==> From Torch Script...')
-        # # Load ScriptModule from io.BytesIO object
-        # with open('VGG16-traced-train.pt', 'rb') as f:
-        #     buffer = io.BytesIO(f.read())
-        # model = torch.jit.load(buffer)
-        raise RuntimeError('Training is not supported on ScriptModules yet.') #https://github.com/pytorch/pytorch/issues/6008
-
-    else:
-        model = VGGNet('D-DSM', num_classes=10, input_size=32) # depthwise separable
+    model = VGGNet('D-DSM', num_classes=num_classes, input_size=input_size) # depthwise separable
     model = model.to(device)
 
     if device.type == 'cuda':
@@ -105,7 +103,7 @@ if __name__ == '__main__':
         model = torch.nn.DataParallel(model)
 
     # Training
-    num_epochs = 200 # as opposed to the paper (74) because of CIFAR10 dataset
+    num_epochs = 200
     lr = 0.1
     # define loss function (criterion) and optimizer
     criterion = nn.CrossEntropyLoss()
@@ -131,4 +129,4 @@ if __name__ == '__main__':
         
     print('==> Finished Training: {} seconds'.format(train_time))
     # Save trained model
-    torch.save(model.state_dict(), 'VGG16model.pth')
+    torch.save(model.state_dict(), args.output)
