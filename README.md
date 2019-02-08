@@ -118,7 +118,7 @@ Avg forward pass time (excluding first): 0.0010324035372052873 seconds
 Total time: 0.07527804374694824 seconds
 ```
 
-As we can see, the results are what we expected (17.466ms vs 10.324ms average), as opposed to the previous inference time we got on a 32x32 image for a single forward pass. In both cases, the first forward pass takes longer (5.891 ms vs 13.796 ms) than the following. But, for a static input (same dimensions), the Torch Sript model is faster on the following forward passes, which is much more representative of real use-cases.
+As we can see, the results are what we expected (1.7466ms vs 1.0324ms average), as opposed to the previous inference time we got on a 32x32 image for a single forward pass. In both cases, the first forward pass takes longer (5.891 ms vs 13.796 ms) than the following. But, for a static input (same dimensions), the Torch Sript model is faster on the following forward passes, which is much more representative of real use-cases.
 
 ### Libtorch
 Before running our prediction, we need to compile the source. In your `libtorch` directory, create a build directory and compile+build the application from source.
