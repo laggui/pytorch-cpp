@@ -17,9 +17,9 @@ This is where you'll find the source for the network's inference in C++. In [pre
 pytorch$ python predict.py pytorch --model=../data/VGG16model.pth --image=../data/dog.png
 ==> Building model...
 ==> Loading PyTorch model...
-Predicted: dog | 10.056212425231934
-Forward pass time: 0.0035958290100097656 seconds
-Total time: 0.004228830337524414 seconds
+Predicted: dog | 1.722057580947876
+Forward pass time: 0.005918025970458984 seconds
+Total time: 0.007593393325805664 seconds
 ```
 
 ```sh

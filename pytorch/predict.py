@@ -99,5 +99,5 @@ if __name__ == '__main__':
     #     model = torch.nn.DataParallel(model)
 
     t0 = time.time()
-    predict(model, cv2.imread(args.image), test=True)
+    predict(model, cv2.imread(args.image))
     print(f'Total time: {time.time()-t0} seconds')
