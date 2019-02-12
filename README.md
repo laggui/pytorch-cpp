@@ -17,9 +17,9 @@ This is where you'll find the source for the network's inference in C++. In [pre
 pytorch$ python predict.py pytorch --model=../data/VGG16model.pth --image=../data/dog.png
 ==> Building model...
 ==> Loading PyTorch model...
-Predicted: dog | 1.722057580947876
-Forward pass time: 0.005918025970458984 seconds
-Total time: 0.007593393325805664 seconds
+Predicted: dog | 10.056212425231934
+Forward pass time: 0.0043811798095703125 seconds
+Total time: 0.0052343260031193495 seconds
 ```
 
 ```sh
@@ -27,8 +27,8 @@ pytorch$ python predict.py torch-script --model=../data/VGG16-traced-eval.pt --i
 ==> Building model...
 ==> Loading Torch Script model...
 Predicted: dog | 10.056212425231934
-Forward pass time: 0.010970354080200195 seconds
-Total time: 0.01229238510131836 seconds
+Forward pass time: 0.01126241683959961 seconds
+Total time: 0.012680109008215368 seconds
 ```
 
 Predictions were done using a 1080 Ti GPU. Interestingly, the traced (static) network has slower inference time. Further investigation on a more realisitc application needs to be done, since this sample example is using CIFAR-10 images (32x32 RGB, which is a very small input size), and only predicting for one sample instead of continuously predicting in real-time.
@@ -44,37 +44,37 @@ pytorch$ python predict.py pytorch --model=../data/VGG16model-224.pth --image=..
 ==> Building model...
 ==> Loading PyTorch model...
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.005882978439331055 seconds
+Forward pass time: 0.005976676940917969 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0017268657684326172 seconds
+Forward pass time: 0.004324197769165039 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.001695871353149414 seconds
+Forward pass time: 0.00431060791015625 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0016937255859375 seconds
+Forward pass time: 0.0046079158782958984 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0017061233520507812 seconds
+Forward pass time: 0.0043218135833740234 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0016863346099853516 seconds
+Forward pass time: 0.004750728607177734 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0020112991333007812 seconds
+Forward pass time: 0.00461125373840332 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.001771688461303711 seconds
+Forward pass time: 0.0052700042724609375 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0017118453979492188 seconds
+Forward pass time: 0.004312992095947266 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0016942024230957031 seconds
+Forward pass time: 0.004832744598388672 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0016887187957763672 seconds
+Forward pass time: 0.004314422607421875 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0017006397247314453 seconds
+Forward pass time: 0.004302263259887695 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0016946792602539062 seconds
+Forward pass time: 0.0047190189361572266 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.001953601837158203 seconds
+Forward pass time: 0.005443096160888672 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0017178058624267578 seconds
-Avg forward pass time (excluding first): 0.001746671540396554 seconds
-Total time: 0.07191038131713867 seconds
+Forward pass time: 0.004314899444580078 seconds
+Avg forward pass time (excluding first): 0.00460256849016462 seconds
+Total time: 0.0730239039985463 seconds
 ```
 
 **Torch Script Model (Static)**
@@ -83,39 +83,38 @@ Total time: 0.07191038131713867 seconds
 pytorch$ python predict.py torch-script --model=../data/VGG16model-224-traced-eval.pt --image=../data/dog-224.png --input=224
 ==> Building model...
 ==> Loading Torch Script model...
-Device: cuda
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.013720512390136719 seconds
+Forward pass time: 0.014840841293334961 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.001064300537109375 seconds
+Forward pass time: 0.0043413639068603516 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0010313987731933594 seconds
+Forward pass time: 0.0043256282806396484 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0010249614715576172 seconds
+Forward pass time: 0.005699634552001953 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.001073598861694336 seconds
+Forward pass time: 0.004336118698120117 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0010318756103515625 seconds
+Forward pass time: 0.004330635070800781 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0010318756103515625 seconds
+Forward pass time: 0.0050067901611328125 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0010263919830322266 seconds
+Forward pass time: 0.00433039665222168 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.001024007797241211 seconds
+Forward pass time: 0.0043239593505859375 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0010232925415039062 seconds
+Forward pass time: 0.0047681331634521484 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0010209083557128906 seconds
+Forward pass time: 0.004338264465332031 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0010225772857666016 seconds
+Forward pass time: 0.004318952560424805 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.001026153564453125 seconds
+Forward pass time: 0.004320621490478516 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0010263919830322266 seconds
+Forward pass time: 0.004678487777709961 seconds
 Predicted: dog | 1.722057580947876
-Forward pass time: 0.0010259151458740234 seconds
-Avg forward pass time (excluding first): 0.0010324035372052873 seconds
-Total time: 0.07527804374694824 seconds
+Forward pass time: 0.004454374313354492 seconds
+Avg forward pass time (excluding first): 0.004540954317365374 seconds
+Total time: 0.08327161299530417 seconds
 ```
 
 As we can see, the results are what we expected (1.7466ms vs 1.0324ms average), as opposed to the previous inference time we got on a 32x32 image for a single forward pass. In both cases, the first forward pass takes longer (5.891 ms vs 13.796 ms) than the following. But, for a static input (same dimensions), the Torch Sript model is faster on the following forward passes, which is much more representative of real use-cases.

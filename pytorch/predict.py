@@ -14,8 +14,9 @@ import cv2
 from vgg import VGGNet
 from utils import try_load
 
-# Check device    
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# Check device
+use_cuda = torch.cuda.is_available()
+device = torch.device('cuda' if use_cuda else 'cpu')
 # CIFAR-10 classes
 classes = ('plane', 'car', 'bird', 'cat',
 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
@@ -46,6 +47,8 @@ def predict(model, image, test=False):
             with torch.no_grad():
                 # forward pass
                 outputs = model(img_tensor)
+            if use_cuda:
+                torch.cuda.synchronize() # wait for operations to be complete
             tf = time.time() - t0
             ttime += tf if i > 0 else 0
             score, predicted = outputs.max(1)
@@ -58,6 +61,8 @@ def predict(model, image, test=False):
         with torch.no_grad():
             # forward pass
             outputs = model(img_tensor)
+        if use_cuda:
+            torch.cuda.synchronize()
         tf = time.time() - t0
         score, predicted = outputs.max(1)
         #print(outputs)
@@ -73,6 +78,7 @@ if __name__ == '__main__':
     parser.add_argument('--classes', type=int, default=10, help='Number of classes')
     parser.add_argument('--input', type=int, default=32, help='Network input size')
     parser.add_argument('--image', type=str, default='../data/dog.png', help='Input image')
+    parser.add_argument('--test_timing', type=int, default=0, help='Test timing with multiple forward pass iterations')
     args = parser.parse_args()
 
     # Model
@@ -90,7 +96,6 @@ if __name__ == '__main__':
         with open(args.model, 'rb') as f:
             buffer = io.BytesIO(f.read())
         model = torch.jit.load(buffer, map_location=device)
-        print(f'Device: {device}')
         #print('[WARNING] ScriptModules cannot be moved to a GPU device yet. Running strictly on CPU for now.')
         #device = torch.device('cpu') # 'to' is not supported on TracedModules (yet)
 
@@ -98,6 +103,6 @@ if __name__ == '__main__':
     #     cudnn.benchmark = True
     #     model = torch.nn.DataParallel(model)
 
-    t0 = time.time()
-    predict(model, cv2.imread(args.image))
-    print(f'Total time: {time.time()-t0} seconds')
+    t0 = time.perf_counter()
+    predict(model, cv2.imread(args.image), test=args.test_timing)
+    print(f'Total time: {time.perf_counter()-t0} seconds')
