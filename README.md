@@ -40,7 +40,7 @@ In order to realistically test the traced (static) network versus its standard (
 **Standard Model (Dynamic)**
 
 ```sh
-pytorch$ python predict.py pytorch --model=../data/VGG16model-224.pth --image=../data/dog-224.png --input=224
+pytorch$ python predict.py pytorch --model=../data/VGG16model-224.pth --image=../data/dog-224.png --input=224 --test_timing=1
 ==> Building model...
 ==> Loading PyTorch model...
 Predicted: dog | 1.722057580947876
@@ -80,7 +80,7 @@ Total time: 0.0730239039985463 seconds
 **Torch Script Model (Static)**
 
 ```sh
-pytorch$ python predict.py torch-script --model=../data/VGG16model-224-traced-eval.pt --image=../data/dog-224.png --input=224
+pytorch$ python predict.py torch-script --model=../data/VGG16model-224-traced-eval.pt --image=../data/dog-224.png --input=224 --test_timing=1
 ==> Building model...
 ==> Loading Torch Script model...
 Predicted: dog | 1.722057580947876
@@ -117,7 +117,7 @@ Avg forward pass time (excluding first): 0.004540954317365374 seconds
 Total time: 0.08327161299530417 seconds
 ```
 
-As we can see, the results are what we expected (1.7466ms vs 1.0324ms average), as opposed to the previous inference time we got on a 32x32 image for a single forward pass. In both cases, the first forward pass takes longer (5.891 ms vs 13.796 ms) than the following. But, for a static input (same dimensions), the Torch Sript model is faster on the following forward passes, which is much more representative of real use-cases.
+As you can see, the difference in timing (averaged) is very slim. In both cases, the first forward pass takes longer than the following (and actually, the Torch Script model takes a lot longer).
 
 ### Libtorch
 Before running our prediction, we need to compile the source. In your `libtorch` directory, create a build directory and compile+build the application from source.
