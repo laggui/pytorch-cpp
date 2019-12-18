@@ -12,7 +12,7 @@
 const std::vector<std::string> classes{"plane", "car", "bird", "cat", "deer", "dog", "frog", "horse", "ship", "truck"};
 
 at::Tensor imageToTensor(cv::Mat & image);
-void predict(std::shared_ptr<torch::jit::script::Module> model, cv::Mat & image);
+void predict(torch::jit::script::Module & module, cv::Mat & image);
 
 // Adapted from https://github.com/goldsborough/examples/blob/cpp/cpp/mnist/mnist.cpp#L106
 // Parameters: means and stddevs lists size must match number of channels for input Tensor
@@ -48,14 +48,20 @@ int main(int argc, const char* argv[]) {
         return -1;
     }
     // Deserialize the ScriptModule from a file using torch::jit::load().
-    std::shared_ptr<torch::jit::script::Module> module = torch::jit::load(argv[1]);
+    torch::jit::script::Module module;
+    try {
+        module = torch::jit::load(argv[1]);
+    }
+    catch (const c10::Error& e) {
+        std::cerr << "Error loading the model\n";
+        return -1;
+    }
 
-    assert(module != nullptr);
     std::cout << "Model loaded" << std::endl;
 
     // Read the image file
     cv::Mat image;
-    image = cv::imread(argv[2], CV_LOAD_IMAGE_COLOR);
+    image = cv::imread(argv[2], cv::IMREAD_COLOR);
 
     // Check for invalid input
     if(! image.data ) {
@@ -66,7 +72,7 @@ int main(int argc, const char* argv[]) {
     // Check for cuda
     if (torch::cuda::is_available()) {
         std::cout << "Moving model to GPU" << std::endl;
-        module->to(at::kCUDA);
+        module.to(at::kCUDA);
     }
     std::clock_t start{std::clock()};
     predict(module, image);
@@ -86,28 +92,28 @@ at::Tensor imageToTensor(cv::Mat & image) {
     cv::vconcat(rgb, 3, rgbConcat);
     
     // Convert Mat image to tensor 1 x C x H x W
-    at::Tensor tensor_image = torch::from_blob(rgbConcat.data, {1, image.channels(), image.rows, image.cols}, at::kByte);
+    at::Tensor tensorImage = torch::from_blob(rgbConcat.data, {1, image.channels(), image.rows, image.cols}, at::kByte);
     
     // Normalize tensor values from [0, 255] to [0, 1]
-    tensor_image = tensor_image.toType(at::kFloat);
-    tensor_image = tensor_image.div_(255);
-    return tensor_image; // 1 x C x H x W
+    tensorImage = tensorImage.toType(at::kFloat);
+    tensorImage = tensorImage.div_(255);
+    return tensorImage; // 1 x C x H x W
 }
 
-void predict(std::shared_ptr<torch::jit::script::Module> module, cv::Mat & image) {
-    at::Tensor tensor_image{imageToTensor(image)};
+void predict(torch::jit::script::Module & module, cv::Mat & image) {
+    at::Tensor tensorImage{imageToTensor(image)};
 
     // Normalize
     struct Normalize normalizeChannels({0.4914, 0.4822, 0.4465}, {0.2023, 0.1994, 0.2010});
-    tensor_image = normalizeChannels(tensor_image);
-    //std::cout << "Image tensor shape: " << tensor_image.sizes() << std::endl;
+    tensorImage = normalizeChannels(tensorImage);
+    //std::cout << "Image tensor shape: " << tensorImage.sizes() << std::endl;
 
     // Move tensor to CUDA memory
-    tensor_image = tensor_image.to(at::kCUDA);
+    tensorImage = tensorImage.to(at::kCUDA);
     // Forward pass
-    at::Tensor result = module->forward({tensor_image}).toTensor();
-    auto max_result = result.max(1);
-    auto max_index = std::get<1>(max_result).item<float>();
-    auto max_out = std::get<0>(max_result).item<float>();
-    std::cout << "Predicted: " << classes[max_index] << " | " << max_out << std::endl;
+    at::Tensor result = module.forward({tensorImage}).toTensor();
+    auto maxResult = result.max(1);
+    auto maxIndex = std::get<1>(maxResult).item<float>();
+    auto maxOut = std::get<0>(maxResult).item<float>();
+    std::cout << "Predicted: " << classes[maxIndex] << " | " << maxOut << std::endl;
 }
