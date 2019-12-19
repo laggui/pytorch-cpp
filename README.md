@@ -3,6 +3,8 @@ In this repo I experiment with PyTorch 1.0 and their new JIT compiler, as well a
 
 Currently, the repo contains a VGG16 based network implementation in PyTorch for CIFAR-10 classification (based on my [previous experiment](https://github.com/laggui/NN_compress)), and the C++ source for inference.
 
+**Note:** timings may vary. In my previous experiments, I found that the traced TorchScript model does not bring any significant improvements when using it with the Python API, but the Libtorch inference time was much faster in C++. This is pretty cool because it means you can easily run your experiments and training in Python, and then bring your models over to your C++ project for serving.
+
 ## pytorch/
 This subdirectory includes the network's [architecture definition](pytorch/vgg.py), the [training script](pytorch/train.py), the [test script](pytorch/test.py) on the CIFAR-10 dataset, a [prediction script](pytorch/predict.py) for inference and, most importantly, the [script to convert the model to Torch Script](pytorch/to_torch_script.py).
 
@@ -156,6 +158,6 @@ Time: 0.009481 seconds
 
 ### TO-DO
 
-- Update libtorch C++ example
+- Update experiments timings for the latest PyTorch release (1.3)
 
 
