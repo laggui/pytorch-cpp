@@ -84,19 +84,17 @@ int main(int argc, const char* argv[]) {
 at::Tensor imageToTensor(cv::Mat & image) {
     // BGR to RGB, which is what our network was trained on
     cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
-    // Split bgr interleaved channels
-    cv::Mat rgb[3];
-    cv::split(image, rgb);
-    // Concatenate channels
-    cv::Mat rgbConcat;
-    cv::vconcat(rgb, 3, rgbConcat);
     
     // Convert Mat image to tensor 1 x C x H x W
-    at::Tensor tensorImage = torch::from_blob(rgbConcat.data, {1, image.channels(), image.rows, image.cols}, at::kByte);
-    
+    at::Tensor tensorImage = torch::from_blob(image.data, {1, image.rows, image.cols, image.channels()}, at::kByte);
+
     // Normalize tensor values from [0, 255] to [0, 1]
     tensorImage = tensorImage.toType(at::kFloat);
     tensorImage = tensorImage.div_(255);
+
+    // Transpose the image for [channels, rows, columns] format of torch tensor
+    tensorImage = at::transpose(tensorImage, 1, 2);
+    tensorImage = at::transpose(tensorImage, 1, 3);
     return tensorImage; // 1 x C x H x W
 }
 
